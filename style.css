@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap');
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background-color: #272757;
+    margin: 0;
+    color: aliceblue;
+    transition: background 0.3s, color 0.3s;
+}
+
+.navbar{
+    background-color: #0F0E47;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+    border-radius: 8px;
+    color: aliceblue;
+}
+
+input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.searchButto {
+    padding: 10px 15px;
+    background-color: #0F0E47;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.searchButto:hover {
+    background-color: #505081;
+}
+
+.countryInfo{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(211, 209, 209, 0.1);
+    font-family: 'Roboto Condensed', Arial, sans-serif;
+}
+.countryInfo p{
+    font-size: 20px;
+}
+
+.footer {
+    text-align: center;
+    padding: 10px;
+    margin-top: 50px;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+.footer a {
+    color: aliceblue;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Shifting to the light mode */
+body.light-mode {
+  background: #f4f4fa;
+  color: #23233a;
+}
+
+.navbar.light-mode {
+  background: #8686AC;
+  color: #23233a;
+}
+.countryInfo.light-mode {
+  background: #c6c6de;
+  color: #23233a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.footer.light-mode {
+  color: #23233a;
+}
+.footer.light-mode a{
+  color: #23233a;
+}
+
+/* Setting the media screen */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+    input[type="text"] {
+        width: 50%;
+    }
+    .searchButto {
+        width: 20%;
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+}

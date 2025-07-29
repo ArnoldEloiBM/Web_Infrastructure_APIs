@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Countries</title>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>Get Any Country</h1>
+    <button id="mode-toggle" style="padding: 5px; margin-top: 5px;">Switch to Light Mode</button>
+  </nav>
+
+  <div class="container">
+    <div class="searchBox">
+      <input type="text" id="search" placeholder="Search for a country..." style="margin-bottom: 10px;">
+      <button class="searchButto" onclick="fetchData()">Search</button>
+    </div>
+    <p id="errorMessage" style="color:red;"></p>
+
+    <div class="countryInfo" id="countryInfo">
+      <img src="" alt="flag" id="flag" style="display: none; width: 200px; height: auto; margin-top: 10px; border-radius: 4px;">
+      <h1 id="CountryName"></h1>
+      <p id="CapitalCity"></p>
+      <p id="Population"></p>
+      <p id="Region"></p> 
+    </div>
+  </div>
+
+  <footer class="footer" id="footer"><a href="https://github.com/ArnoldEloiBM">ArnoldEloiBM.</a> &copy;2025 Copyright.</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
