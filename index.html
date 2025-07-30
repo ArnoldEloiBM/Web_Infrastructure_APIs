@@ -3,33 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iwacu Muhasure</title>
   <link rel="stylesheet" href="style.css">
-  <title>Countries</title>
 </head>
 <body>
-  <nav class="navbar">
-    <h1>Get Any Country</h1>
-    <button id="mode-toggle" style="padding: 5px; margin-top: 5px;">Switch to Light Mode</button>
-  </nav>
+  <div class="navbar"><h1>Get Any Country</h1></div>
 
-  <div class="container">
-    <div class="searchBox">
-      <input type="text" id="search" placeholder="Search for a country..." style="margin-bottom: 10px;">
-      <button class="searchButto" onclick="fetchData()">Search</button>
-    </div>
-    <p id="errorMessage" style="color:red;"></p>
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Search country...">
+    <button id="searchBtn">Search</button>
 
-    <div class="countryInfo" id="countryInfo">
-      <img src="" alt="flag" id="flag" style="display: none; width: 200px; height: auto; margin-top: 10px; border-radius: 4px;">
-      <h1 id="CountryName"></h1>
-      <p id="CapitalCity"></p>
-      <p id="Population"></p>
-      <p id="Region"></p> 
-    </div>
+    <select id="regionFilter">
+      <option value="">All Regions</option>
+    </select>
+
+    <select id="letterFilter">
+      <option value="">All Letters</option>
+    </select>
+
+    <select id="populationFilter">
+      <option value="">All Populations</option>
+      <option value="small">&lt; 1M</option>
+      <option value="medium">1M - 10M</option>
+      <option value="large">10M - 100M</option>
+      <option value="huge">&gt; 100M</option>
+    </select>
+
   </div>
+  <div id="highlighted-country"></div>
+  <div id="countries"></div>
 
   <footer class="footer" id="footer"><a href="https://github.com/ArnoldEloiBM">ArnoldEloiBM.</a> &copy;2025 Copyright.</footer>
-
+  
   <script src="script.js"></script>
 </body>
 </html>

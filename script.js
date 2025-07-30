@@ -1,82 +1,106 @@
-// Fetching Data from the REST Countries API
-async function fetchData() {
-    try {
-        const searchInput = document.getElementById('search');
-        const countryName = searchInput.value.trim();
+let allCountries = [];
+let filteredCountries = [];
 
-        // Basic validation for empty input
-        if (!countryName) {
-            console.warn("Please enter a country name.");
-            document.getElementById('flag').style.display = 'none';
-            document.getElementById('CountryName').textContent = '';
-            document.getElementById('CapitalCity').textContent = '';
-            document.getElementById('Population').textContent = '';
-            document.getElementById('Region').textContent = '';
-            return;
-        }
-
-        const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error(`Country "${countryName}" not found. Please check the spelling.`);
-            }
-            throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.length > 0 && data[0].flags && data[0].flags.svg) {
-            const country = data[0];
-
-            // Show the country information division
-            document.getElementById('countryInfo').style.display = 'flex';
-
-            // Country Information
-            const flagImageElement = document.getElementById('flag');
-            flagImageElement.src = country.flags.svg;
-            flagImageElement.alt = `Flag of ${country.name.common}`;
-            flagImageElement.style.display = 'block';
-            document.getElementById('CountryName').textContent = country.name.common || 'N/A';
-            document.getElementById('CapitalCity').textContent = 'Capital: ' + (country.capital ? country.capital[0] : 'N/A');
-            document.getElementById('Population').textContent = 'Population: ' + (country.population ? country.population.toLocaleString() : 'N/A');
-            document.getElementById('Region').textContent = 'Region: ' + (country.region || 'N/A');
-            document.getElementById('errorMessage').textContent = '';
-        } else {
-            throw new Error('Country data or flag information not available for this search.');
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('flag').style.display = 'none';
-        document.getElementById('CountryName').textContent = '';
-        document.getElementById('CapitalCity').textContent = '';
-        document.getElementById('Population').textContent = '';
-        document.getElementById('Region').textContent = '';
-        document.getElementById('errorMessage').textContent = error.message;
-    }
+const loadcountryAPI = () => {
+    fetch(`https://restcountries.com/v3.1/all?fields=name,capital,population,flags,region`)
+    .then(res => res.json())
+    .then(data => {
+        allCountries = data;
+        filteredCountries = data;
+        populateRegionFilter();
+        populateLetterFilter();
+        displayCountries();
+    })
+    .catch(error => console.error('Error fetching countries:', error));
 }
 
-// Toggle Mode functionality for switching between light and dark modes
-document.addEventListener('DOMContentLoaded', function () {
-    const modeToggle = document.getElementById('mode-toggle');
-    const body = document.body;
-    const navbar = document.querySelector('.navbar');
-    const countryInfo = document.getElementById('countryInfo');
-    const footer = document.querySelector('footer');
-
-    // Set initial mode to dark
-    body.classList.remove('light-mode');
-    navbar.classList.remove('light-mode');
-    countryInfo.classList.remove('light-mode');
-    footer.classList.remove('light-mode');
-
-
-    // Set the light-mode
-    modeToggle.addEventListener('click', function () {
-        body.classList.toggle('light-mode');
-        navbar.classList.toggle('light-mode');
-        countryInfo.classList.toggle('light-mode');
-        footer.classList.toggle('light-mode');
-        modeToggle.textContent = body.classList.contains('light-mode') ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+// Regional Filter with a dropdown option
+function populateRegionFilter() {
+    const regions = Array.from(new Set(allCountries.map(c => c.region).filter(Boolean)));
+    const regionFilter = document.getElementById('regionFilter');
+    regions.sort().forEach(region => {
+        const opt = document.createElement('option');
+        opt.value = region;
+        opt.textContent = region;
+        regionFilter.appendChild(opt);
     });
+}
+
+// Letter Filterwith a dropdown option
+function populateLetterFilter() {
+    const letters = Array.from(new Set(allCountries.map(c => c.name.common[0].toUpperCase())));
+    const letterFilter = document.getElementById('letterFilter');
+    letters.sort().forEach(letter => {
+        const opt = document.createElement('option');
+        opt.value = letter;
+        opt.textContent = letter;
+        letterFilter.appendChild(opt);
+    });
+}
+
+// Highlighted Country and displays the highlighted country in a larger card format
+function displayCountries(highlighted = null) {
+    const container = document.getElementById('countries');
+    const highlightedContainer = document.getElementById('highlighted-country');
+    let countriesToShow = filteredCountries;
+    if (highlighted) {
+        highlightedContainer.innerHTML = getCountryCard(highlighted, true);
+        countriesToShow = filteredCountries.filter(c => c.name.common !== highlighted.name.common);
+    } else {
+        highlightedContainer.innerHTML = '';
+    }
+    container.innerHTML = countriesToShow.map(c => getCountryCard(c, false)).join('');
+}
+
+//Generating the HTML for each country card -  a function that creates a card for each country with its flag, name, capital, population, and region.
+function getCountryCard(country, big = false) {
+    return `<div class="country-card${big ? ' big' : ''}">
+        ${country.flags ? `<img class="country-flag" src="${country.flags.png}" alt="Flag of ${country.name.common}">` : ''}
+        <h2>${country.name.common}</h2>
+        <p><strong>Capital:</strong> ${country.capital ? country.capital[0] : 'N/A'}</p>
+        <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
+        <p><strong>Region:</strong> ${country.region}</p>
+    </div>`;
+}
+
+// This applies all filters based on the selected region, first letter of the country name, and population size.
+function applyFilters() {
+    const region = document.getElementById('regionFilter').value;
+    const letter = document.getElementById('letterFilter').value;
+    const population = document.getElementById('populationFilter').value;
+    filteredCountries = allCountries.filter(c => {
+        let match = true;
+        if (region && c.region !== region) match = false;
+        if (letter && c.name.common[0].toUpperCase() !== letter) match = false;
+        if (population) {
+            if (population === 'small' && c.population >= 1_000_000) match = false;
+            if (population === 'medium' && (c.population < 1_000_000 || c.population > 10_000_000)) match = false;
+            if (population === 'large' && (c.population < 10_000_000 || c.population > 100_000_000)) match = false;
+            if (population === 'huge' && c.population <= 100_000_000) match = false;
+        }
+        return match;
+    });
+    displayCountries();
+}
+
+// Event listeners for search and filter functionality.
+document.addEventListener('DOMContentLoaded', () => {
+    loadcountryAPI();
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (!searchValue) {
+            displayCountries();
+            return;
+        }
+        const found = allCountries.find(c => c.name.common.toLowerCase() === searchValue);
+        if (found) {
+            displayCountries(found);
+        } else {
+            document.getElementById('highlighted-country').innerHTML = `<div class='country-card big'><p>Country not found.</p></div>`;
+            document.getElementById('countries').innerHTML = '';
+        }
+    });
+    document.getElementById('regionFilter').addEventListener('change', applyFilters);
+    document.getElementById('letterFilter').addEventListener('change', applyFilters);
+    document.getElementById('populationFilter').addEventListener('change', applyFilters);
 });
